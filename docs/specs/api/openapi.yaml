@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: API для бэкенда "тестового задания"
+  description: Отправка запросов статистики и контроль за их фоновым выполнением
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5155
+    description: локальный сервер разработки
+
+paths:
+  /:
+    get:
+      summary: дефолтный "Hello World!"
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello World!

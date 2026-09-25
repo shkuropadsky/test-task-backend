@@ -1,0 +1,3 @@
+### дефолтный "Hello World!"
+GET http://localhost:5155/
+Accept: text/plain
