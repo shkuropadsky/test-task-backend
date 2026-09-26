@@ -19,4 +19,4 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: Hello World!
+              example: Hello World!

@@ -1,5 +1,7 @@
 <Solution>
+  <Folder Name="/src/" />
   <Folder Name="/tests/">
+    <Project Path="tests/ApiSchemaTests/ApiSchemaTests.csproj" />
     <Project Path="tests/MinimalAPI.ComponentTests/MinimalAPI.ComponentTests.csproj" />
   </Folder>
   <Project Path="src/MinimalAPI/MinimalAPI.csproj" />
