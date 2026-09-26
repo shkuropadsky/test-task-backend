@@ -1,8 +1,7 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Json.Schema;
 using System.Text.Json;
 using System.Net;
-using Microsoft.OpenApi.Writers;
 
 namespace ApiSchemaTests.Extensions;
 
@@ -11,7 +10,7 @@ public static class OpenApiAssert
     public static async Task AssertSchemaAsync(this HttpResponseMessage response,
         OpenApiDocument doc,
         string endpoint,
-        OperationType method,
+        HttpMethod method,
         HttpStatusCode statusCode,
         string mediaType)
     {

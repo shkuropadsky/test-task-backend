@@ -5,7 +5,7 @@
 ## Решение
 1. Целевую спецификацию API будем описывать в `openapi.yaml` (`docs\specs\api\`)
 2. Для ручного тестирования будем использовать `*.http`-файлы (`tests\HttpRequests\`).
-3. Авто-тестирование контрактов (по `openapi.yaml`) - xUnit (`tests\ApiSchemaTests`)
+3. Авто-тестирование схемы (по `openapi.yaml`) - xUnit (`tests\ApiSchemaTests`)
 4. Авто-тестирование (компонентное) бизнес-логики - xUnit (`tests\MinimalAPI.ComponentTests`)
 ## Последствия
 Наполняем спецификацию - следим за покрытием - добавляем тесты.

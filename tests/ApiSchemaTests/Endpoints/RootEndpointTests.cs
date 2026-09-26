@@ -1,6 +1,6 @@
 using System.Net;
 using ApiSchemaTests.Extensions;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace ApiSchemaTests.Endpoints;
 
@@ -19,6 +19,6 @@ public class RootEndpointTests : IClassFixture<CustomWebApplicationFactory>
     {
         HttpResponseMessage response = await _client.GetAsync("/");
         
-        await response.AssertSchemaAsync(_doc, "/", OperationType.Get, HttpStatusCode.OK, "text/plain");
+        await response.AssertSchemaAsync(_doc, "/", HttpMethod.Get, HttpStatusCode.OK, "text/plain");
     }
 }
