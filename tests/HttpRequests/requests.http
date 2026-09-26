@@ -1,3 +1,7 @@
+@hostname = localhost
+@port = 5155
+@host = http://{{hostname}}:{{port}}
+
 ### дефолтный "Hello World!"
-GET http://localhost:5155/
+GET {{host}}/
 Accept: text/plain
