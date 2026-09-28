@@ -1,0 +1,17 @@
+services:
+  seq:
+    image: datalust/seq:latest
+    container_name: backend-seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=true
+      - SEQ_API_CANONICALURI=http://localhost:8081
+    ports:
+      - "8081:80"
+      - "5341:5341" 
+    volumes:
+      - seq_data:/data
+    restart: unless-stopped
+
+volumes:
+  seq_data: 
