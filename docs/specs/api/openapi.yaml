@@ -9,6 +9,87 @@ servers:
     description: локальный сервер разработки
 
 paths:
+  /report/user_statistics:
+    post:
+      summary: Запрос пользовательской статистики
+      description: Инициирование задачи с отложенным выполнением
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - from
+                - to
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                  description: GUID пользователя
+                from:
+                  type: string
+                  format: date-time
+                  description: начало периода
+                to:
+                  type: string
+                  format: date-time
+                  description: конец периода
+      responses:
+        '201':
+          description: Запрос зарегистрирован, но не выполнен
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: uuid
+                description: GUID запроса
+  /report/info:
+    get:
+      summary: Получение информации о запросе
+      description: Состояние задачи и результат выполнения (при полном завершении)
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: GUID запроса
+          schema:
+            type: string
+            format: uuid 
+      responses:
+        '200':
+            description: Запрос найден, стасус выполнения известен
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - query
+                    - percent
+                  properties:
+                    query:
+                      type: string
+                      format: uuid
+                      description: GUID запроса (тот же, что был задан в параметрах)
+                    percent:
+                      type: integer
+                      description: Процент выполнения запроса
+                    result:                    
+                      type: object
+                      nullable: true
+                      description: Результат выполнения запроса (или null)
+                      required:
+                        - user_id
+                        - count_sign_in
+                      properties:
+                        user_id:
+                          type: string
+                          format: uuid
+                          description: GUID пользователя
+                        count_sign_in:
+                          type: string
+                          description: Пользовательская статистика
   /:
     get:
       summary: дефолтный "Hello World!"
