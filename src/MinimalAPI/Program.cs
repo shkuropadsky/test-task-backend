@@ -1,3 +1,4 @@
+using MinimalAPI.Endpoints;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -34,6 +35,8 @@ app.MapGet("/", (ILogger<Program> logger) =>
     logger.LogDebug("Время: {Time:HH:mm:ss.fff}", DateTime.Now);
     return "Hello World!";
 });
+
+app.MapReportEndpoints();
 
 app.Run();
 
