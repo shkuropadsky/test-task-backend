@@ -37,7 +37,7 @@ paths:
                   format: date-time
                   description: конец периода
       responses:
-        '201':
+        '200':
           description: Запрос зарегистрирован, но не выполнен
           content:
             text/plain:

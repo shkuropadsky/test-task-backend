@@ -1,5 +1,3 @@
-using MinimalAPI.Domain;
-
 namespace MinimalAPI.Application;
 
 public record ReportInfoResponseDto(

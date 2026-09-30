@@ -3,15 +3,23 @@ using MinimalAPI.Application;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Text.Json;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
+
 builder.Host.UseSerilog();
 
-builder.Services.AddHttpLogging(logging => { });
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = HttpLoggingFields.RequestBody
+                          | HttpLoggingFields.ResponseBody;
+    logging.RequestBodyLogLimit = 4096;
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.ConfigureHttpJsonOptions(options =>

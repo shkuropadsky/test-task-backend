@@ -1,6 +1,9 @@
 using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
 using ApiSchemaTests.Extensions;
 using Microsoft.OpenApi;
+using MinimalAPI.Application;
 
 namespace ApiSchemaTests.Endpoints;
 
@@ -15,7 +18,34 @@ public class ReportEndpointTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task ReportEndpoint_Matches_OpenApiSpec_HasNoResult()
+    public async Task ReportUserStatisticsEndpoint_Matches_OpenApiSpec()
+    {
+        string userId = "1a98b57d-e090-4d18-8654-678e463b7aaa";
+
+        var requestDto = new ReportUserStatisticsRequestDto(
+            UserId: Guid.Parse(userId),
+            From: DateTime.UtcNow.AddDays(-7),
+            To: DateTime.UtcNow
+        );
+
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+        };
+
+        string endpoint = "/report/user_statistics";
+        string url = endpoint;
+
+        HttpResponseMessage response = await _client.PostAsJsonAsync(url, requestDto, jsonOptions);
+
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+
+        await response.AssertEndpointAsync(_doc, url, HttpMethod.Post, HttpStatusCode.OK, "text/plain");
+    }
+
+
+    [Fact]
+    public async Task ReportInfoEndpoint_Matches_OpenApiSpec_HasNoResult()
     {
         string endpoint = "/report/info";
         string url = endpoint + "?query=1a98b57d-e090-4d18-8654-678e463b7aaa"; // 77 + null
@@ -27,7 +57,7 @@ public class ReportEndpointTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task ReportEndpoint_Matches_OpenApiSpec_HasResult()
+    public async Task ReportInfoEndpoint_Matches_OpenApiSpec_HasResult()
     {
         string endpoint = "/report/info";
         string url = endpoint + "?query=1a98b57d-e090-4d18-8654-678e463b7bbb"; // 100 + Result
