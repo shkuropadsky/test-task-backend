@@ -2,6 +2,7 @@ using MinimalAPI.Endpoints;
 using MinimalAPI.Application;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,11 @@ builder.Host.UseSerilog();
 
 builder.Services.AddHttpLogging(logging => { });
 builder.Services.AddOpenApi();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+});
 
 builder.Services.AddScoped<IReportService, ReportService>();
 

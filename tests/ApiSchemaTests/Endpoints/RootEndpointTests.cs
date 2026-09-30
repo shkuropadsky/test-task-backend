@@ -17,8 +17,11 @@ public class RootEndpointTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task RootEndpoint_Matches_OpenApiSpec()
     {
-        HttpResponseMessage response = await _client.GetAsync("/");
+        string endpoint = "/";
+        string url = endpoint;
+
+        HttpResponseMessage response = await _client.GetAsync(endpoint);
         
-        await response.AssertEndpointAsync(_doc, "/", HttpMethod.Get, HttpStatusCode.OK, "text/plain");
+        await response.AssertEndpointAsync(_doc, url, HttpMethod.Get, HttpStatusCode.OK, "text/plain");
     }
 }
