@@ -1,9 +1,10 @@
 using MinimalAPI.Endpoints;
-using MinimalAPI.Application;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Text.Json;
 using Microsoft.AspNetCore.HttpLogging;
+using MinimalAPI.Application.Interfaces;
+using MinimalAPI.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Host.UseSerilog();
 
 builder.Services.AddHttpLogging(logging =>
 {
-    logging.LoggingFields = HttpLoggingFields.RequestBody
+    logging.LoggingFields = HttpLoggingFields.RequestBody 
+                          | HttpLoggingFields.RequestQuery
                           | HttpLoggingFields.ResponseBody;
     logging.RequestBodyLogLimit = 4096;
 });
@@ -27,6 +29,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 });
 
+
+builder.Services.AddSingleton<IReportTaskRegistry, ReportTaskRegistry>();
+builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
 var app = builder.Build();

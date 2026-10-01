@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MinimalAPI.Application;
+using MinimalAPI.Application.Interfaces;
+using MinimalAPI.Contracts;
 
 namespace MinimalAPI.Endpoints;
 
@@ -17,9 +18,9 @@ public static class ReportEndpoints
             logger.LogInformation("--- /report/user_statistics ---");
             logger.LogDebug("Время: {Time:HH:mm:ss.fff}", DateTime.Now);
 
-            string response = "1a98b57d-e090-4d18-8654-678e463b73e8";
+            Guid response = await reportService.PostReportUserStatisticsAsync(request);
 
-            return response;
+            return response.ToString();
         });
 
         group.MapGet("/info", async ([FromQuery] Guid query, IReportService reportService) =>
@@ -34,6 +35,7 @@ public static class ReportEndpoints
                 return Results.NotFound();
             }
 
+            logger.LogDebug("Query={Query}: Percent={Percent}%, Result={Result} ", response.Query, response.Percent, response.Result);
             return Results.Ok(response);
         });
     }

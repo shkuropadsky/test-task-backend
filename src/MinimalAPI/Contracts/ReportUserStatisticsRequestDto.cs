@@ -1,4 +1,4 @@
-namespace MinimalAPI.Application;
+namespace MinimalAPI.Contracts;
 
 public record ReportUserStatisticsRequestDto(
     Guid UserId,
