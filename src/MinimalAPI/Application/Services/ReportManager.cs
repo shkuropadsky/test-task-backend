@@ -15,7 +15,7 @@ public class ReportManager : IReportManager
 
     public Guid RegisterDomainTask(StatQueryTask domainTask)
     {
-        Task threadTask = Task.Run(() => domainTask.Generate());
+        Task threadTask = Task.Run(async () => await domainTask.Generate());
 
         ReportTask task = new()
         {

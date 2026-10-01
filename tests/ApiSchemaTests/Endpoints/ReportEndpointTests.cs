@@ -4,6 +4,7 @@ using System.Text.Json;
 using ApiSchemaTests.Extensions;
 using Microsoft.OpenApi;
 using MinimalAPI.Application;
+using MinimalAPI.Contracts;
 
 namespace ApiSchemaTests.Endpoints;
 

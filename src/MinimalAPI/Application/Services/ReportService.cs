@@ -6,9 +6,14 @@ namespace MinimalAPI.Application.Services;
 
 public class ReportService : IReportService
 {
+    IServiceProvider _serviceProvider;
+    private ILogger<ReportService> _logger;
     private IReportManager _manager;
-    public ReportService(IReportManager manager)
+
+    public ReportService(IServiceProvider serviceProvider, ILogger<ReportService> logger, IReportManager manager)
     {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
         _manager = manager;
     }
 
@@ -21,7 +26,9 @@ public class ReportService : IReportService
             To: request.To
         );
 
-        StatQueryTask domainTask = new()
+        _logger.LogDebug("Новый запрос: {queryId}", statQuery.Id);
+
+        StatQueryTask domainTask = new(_serviceProvider)
         {
             Query = statQuery
         };
@@ -39,12 +46,14 @@ public class ReportService : IReportService
         if (queryTask == null)
         {
             // запрос не найден
+            _logger.LogError("Запрос {queryId} не найден!", queryId);
             return null;
         }
 
         ReportInfoResponseDto response;
         if (queryTask.Result == null)
         {
+
             // частично выполненный запрос 
             response = new(
                 Query: queryId,
