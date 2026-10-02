@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using ApiSchemaTests.Extensions;
 using Microsoft.OpenApi;
-using MinimalAPI.Application;
+using MinimalAPI.Application.Services;
 using MinimalAPI.Contracts;
 
 namespace ApiSchemaTests.Endpoints;
@@ -49,7 +49,7 @@ public class ReportEndpointTests : IClassFixture<CustomWebApplicationFactory>
     public async Task ReportInfoEndpoint_Matches_OpenApiSpec_HasNoResult()
     {
         string endpoint = "/report/info";
-        string url = endpoint + "?query=1a98b57d-e090-4d18-8654-678e463b7aaa"; // 77 + null
+        string url = endpoint + "?query=" + ReportTaskRegistry.DEMO_PROGRESS_077; // 77 + null
 
         HttpResponseMessage response = await _client.GetAsync(url);
         Console.WriteLine(await response.Content.ReadAsStringAsync());
@@ -61,7 +61,7 @@ public class ReportEndpointTests : IClassFixture<CustomWebApplicationFactory>
     public async Task ReportInfoEndpoint_Matches_OpenApiSpec_HasResult()
     {
         string endpoint = "/report/info";
-        string url = endpoint + "?query=1a98b57d-e090-4d18-8654-678e463b7bbb"; // 100 + Result
+        string url = endpoint + "?query=" + ReportTaskRegistry.DEMO_PROGRESS_100; // 100 + Result
 
         HttpResponseMessage response = await _client.GetAsync(url);
         Console.WriteLine(await response.Content.ReadAsStringAsync());

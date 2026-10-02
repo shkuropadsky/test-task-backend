@@ -22,6 +22,7 @@ public class StatQueryTask(IServiceProvider serviceProvider)
 
         DateTime t1 = DateTime.Now;
         logger.LogDebug("Начало: {Time:HH:mm:ss.fff}", t1);
+        logger.LogDebug("Query: {QueryId}", Query.Id);
 
         logger.LogDebug("================================");
         logger.LogDebug("Generate: {Percent} %", Percent);
@@ -40,13 +41,15 @@ public class StatQueryTask(IServiceProvider serviceProvider)
 
         logger.LogDebug("--------------------------------");
         logger.LogDebug("Generate: {Percent} %", Percent);
-        logger.LogDebug("Generate: {Result} %", Result);
+        logger.LogDebug(" QueryId: {QueryId}", Query.Id);
+        logger.LogDebug("  UserId: {UserId}", Query.UserId);
+        logger.LogDebug("          {Result}", Result);
         logger.LogDebug("================================");
 
         DateTime t2 = DateTime.Now;
         logger.LogDebug("Конец: {Time:HH:mm:ss.fff}", t2);
         TimeSpan span = t2 - t1;
-        logger.LogDebug("Время: {Span}", span);
+        logger.LogDebug("Время: {Span:hh\\:mm\\:ss}", span);
 
 
     }
