@@ -6,11 +6,11 @@ namespace MinimalAPI.Application.Services;
 
 public class ReportManager : IReportManager
 {
-    private IReportTaskRegistry _tasks;
+    private IReportTaskRegistry _taskRegistry;
 
-    public ReportManager(IReportTaskRegistry tasks)
+    public ReportManager(IReportTaskRegistry taskRegistry)
     {
-        _tasks = tasks;
+        _taskRegistry = taskRegistry;
     }
 
     public Guid RegisterDomainTask(StatQueryTask domainTask)
@@ -23,13 +23,13 @@ public class ReportManager : IReportManager
             ThreadTask = threadTask
         };
 
-        _tasks.Add(domainTask.Query.Id, task);
+        _taskRegistry.Add(domainTask.Query.Id, task);
         return domainTask.Query.Id;
     }
 
     public StatQueryTask? GetDomainTask(Guid queryId)
     {
-        var reportTask = _tasks.Get(queryId);
+        var reportTask = _taskRegistry.Get(queryId);
         return reportTask?.DomainTask;
     }
 
