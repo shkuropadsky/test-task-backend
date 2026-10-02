@@ -37,7 +37,7 @@ paths:
                   format: date-time
                   description: конец периода
       responses:
-        '200':
+        "200":
           description: Запрос зарегистрирован, но не выполнен
           content:
             text/plain:
@@ -56,45 +56,47 @@ paths:
           description: GUID запроса
           schema:
             type: string
-            format: uuid 
+            format: uuid
       responses:
-        '200':
-            description: Запрос найден, стасус выполнения известен
-            content:
-              application/json:
-                schema:
-                  type: object
-                  required:
-                    - query
-                    - percent
-                  properties:
-                    query:
-                      type: string
-                      format: uuid
-                      description: GUID запроса (тот же, что был задан в параметрах)
-                    percent:
-                      type: integer
-                      description: Процент выполнения запроса
-                    result:                    
-                      type: object
-                      nullable: true
-                      description: Результат выполнения запроса (или null)
-                      required:
-                        - user_id
-                        - count_sign_in
-                      properties:
-                        user_id:
-                          type: string
-                          format: uuid
-                          description: GUID пользователя
-                        count_sign_in:
-                          type: string
-                          description: Пользовательская статистика
+        "200":
+          description: Запрос найден, стасус выполнения известен
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - query
+                  - percent
+                properties:
+                  query:
+                    type: string
+                    format: uuid
+                    description: GUID запроса (тот же, что был задан в параметрах)
+                  percent:
+                    type: integer
+                    description: Процент выполнения запроса
+                  result:
+                    type: object
+                    nullable: true
+                    description: Результат выполнения запроса (или null)
+                    required:
+                      - user_id
+                      - count_sign_in
+                    properties:
+                      user_id:
+                        type: string
+                        format: uuid
+                        description: GUID пользователя
+                      count_sign_in:
+                        type: string
+                        description: Пользовательская статистика
+        "404":
+          description: Запрос не найден
   /:
     get:
       summary: дефолтный "Hello World!"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             text/plain:
