@@ -1,12 +1,12 @@
 using System.Net;
 
-namespace MinimalAPI.ComponentTests.Endpoints;
+namespace MinimalAPI.Tests.Endpoints.Root;
 
-public class RootEndpointTests : IClassFixture<CustomWebApplicationFactory>
+public class RootComponentTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public RootEndpointTests(CustomWebApplicationFactory factory)
+    public RootComponentTests(CustomWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }

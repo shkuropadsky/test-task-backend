@@ -2,9 +2,8 @@ using Microsoft.OpenApi;
 using Json.Schema;
 using System.Text.Json;
 using System.Net;
-using Microsoft.AspNetCore.Rewrite;
 
-namespace ApiSchemaTests.Extensions;
+namespace MinimalAPI.Tests.Extensions;
 
 public static class HttpResponseMessageExtensions
 {
@@ -17,11 +16,20 @@ public static class HttpResponseMessageExtensions
     {
         string endpoint = url.Split('?')[0];
 
-        OpenApiMediaType specMediaType = specDocument
+        IOpenApiResponse specApiResponse = specDocument 
             .Paths[endpoint]
             .Operations![method]
-            .Responses![((int)statusCode).ToString()]
-            .Content![mediaType];
+            .Responses![((int)statusCode).ToString()];
+        Assert.Equal(statusCode, response.StatusCode);
+
+        if (specApiResponse.Content == null)
+        {
+            string responseBody = await response.Content.ReadAsStringAsync();
+            Assert.True(string.IsNullOrWhiteSpace(responseBody));
+            return;            
+        }
+
+        OpenApiMediaType specMediaType = specApiResponse.Content![mediaType];
 
         Assert.Equal(statusCode, response.StatusCode);
         Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);

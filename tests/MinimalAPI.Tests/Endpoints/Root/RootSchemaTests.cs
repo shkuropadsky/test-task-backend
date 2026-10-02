@@ -1,21 +1,21 @@
 using System.Net;
-using ApiSchemaTests.Extensions;
 using Microsoft.OpenApi;
+using MinimalAPI.Tests.Extensions;
 
-namespace ApiSchemaTests.Endpoints;
+namespace MinimalAPI.Tests.Endpoints.Root;
 
-public class RootEndpointTests : IClassFixture<CustomWebApplicationFactory>
+public class RootSchemaTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
     private readonly OpenApiDocument _doc;
-    public RootEndpointTests(CustomWebApplicationFactory factory)
+    public RootSchemaTests(CustomWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
         _doc = factory.OpenApiDoc;
     }
 
     [Fact]
-    public async Task RootEndpoint_Matches_OpenApiSpec()
+    public async Task GetRoot_Matches_ApiSpec()
     {
         string endpoint = "/";
         string url = endpoint;

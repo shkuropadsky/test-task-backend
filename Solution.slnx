@@ -1,8 +1,8 @@
 <Solution>
-  <Folder Name="/src/" />
-  <Folder Name="/tests/">
-    <Project Path="tests/ApiSchemaTests/ApiSchemaTests.csproj" />
-    <Project Path="tests/MinimalAPI.ComponentTests/MinimalAPI.ComponentTests.csproj" />
+  <Folder Name="/src/" >
+    <Project Path="src/MinimalAPI/MinimalAPI.csproj" />
   </Folder>
-  <Project Path="src/MinimalAPI/MinimalAPI.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/MinimalAPI.Tests/MinimalAPI.Tests.csproj" />
+  </Folder>
 </Solution>
