@@ -38,7 +38,6 @@ public class ReportEndpointTests : IClassFixture<CustomWebApplicationFactory>
         string url = endpoint;
 
         HttpResponseMessage response = await _client.PostAsJsonAsync(url, requestDto, jsonOptions);
-
         Console.WriteLine(await response.Content.ReadAsStringAsync());
 
         await response.AssertEndpointAsync(_doc, url, HttpMethod.Post, HttpStatusCode.OK, "text/plain");

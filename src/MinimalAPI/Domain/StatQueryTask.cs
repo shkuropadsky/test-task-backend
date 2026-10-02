@@ -4,6 +4,8 @@ namespace MinimalAPI.Domain;
 
 public class StatQueryTask(IServiceProvider serviceProvider)
 {
+    public const int DEFAULT_COUNT_SIGN_IN = 12;
+
     public required StatQuery Query { get; init; }
 
     public int Percent { get; set; }
@@ -37,7 +39,7 @@ public class StatQueryTask(IServiceProvider serviceProvider)
             logger.LogDebug("Generate: {Percent} %", Percent);
         }
 
-        Result = new(CountSignIn: 12);
+        Result = new(CountSignIn: DEFAULT_COUNT_SIGN_IN);
 
         logger.LogDebug("--------------------------------");
         logger.LogDebug("Generate: {Percent} %", Percent);
@@ -50,8 +52,6 @@ public class StatQueryTask(IServiceProvider serviceProvider)
         logger.LogDebug("Конец: {Time:HH:mm:ss.fff}", t2);
         TimeSpan span = t2 - t1;
         logger.LogDebug("Время: {Span:hh\\:mm\\:ss}", span);
-
-
     }
 
 }

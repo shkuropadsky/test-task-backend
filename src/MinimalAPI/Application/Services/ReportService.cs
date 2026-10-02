@@ -6,7 +6,7 @@ namespace MinimalAPI.Application.Services;
 
 public class ReportService : IReportService
 {
-    IServiceProvider _serviceProvider;
+    private IServiceProvider _serviceProvider;
     private ILogger<ReportService> _logger;
     private IReportManager _manager;
 
