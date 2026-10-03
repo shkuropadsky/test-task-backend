@@ -24,6 +24,11 @@ public class ReportTaskRegistry : IReportTaskRegistry
         _tasks.TryAdd(id, task);
     }
 
+    public void Remove(Guid id)
+    {
+        _tasks.TryRemove(id, out _);
+    }
+
     public ReportTask? Get(Guid taskId)
     {
         _tasks.TryGetValue(taskId, out var reportTask);

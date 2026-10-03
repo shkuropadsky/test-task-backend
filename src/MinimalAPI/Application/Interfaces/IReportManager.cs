@@ -4,7 +4,9 @@ namespace MinimalAPI.Application.Interfaces;
 
 public interface IReportManager
 {
-    Guid RegisterDomainTask(StatQueryTask domainTask);
+    void RegisterDomainTask(StatQueryTask domainTask);
+
+    void UnRegisterDomainTask(Guid queryId);
 
     StatQueryTask? GetDomainTask(Guid queryId);
 

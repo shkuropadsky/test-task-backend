@@ -4,8 +4,12 @@ namespace MinimalAPI.Application.Models;
 
 public class ReportTask
 {
-    public required StatQueryTask DomainTask { get; init; }
-    
-    public required Task ThreadTask { get; init; }
-    
+    public StatQueryTask DomainTask { get; init; }
+
+    public Task? ThreadTask { get; set; }
+
+    public ReportTask(StatQueryTask domainTask)
+    {
+        DomainTask = domainTask;
+    }
 }

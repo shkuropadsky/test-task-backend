@@ -49,17 +49,27 @@ public class ReportService : IReportService
         // runtime-задача для запроса
         StatQueryTask domainTask = new(_serviceProvider)
         {
-            Query = statQuery
             Query = statQuery,
             Percent = 0,
             Result = null
         };
 
+        domainTask.OnProgress += OnDomainTaskProgress;
         _manager.RegisterDomainTask(domainTask);
-
-        return statQuery.Id;
     }
 
+    /// <summary>
+    /// Сохраняет результаты запроса в базе,
+    /// убирает её из реестра активных задач
+    /// и отписывается от её событий
+    /// </summary>
+    private void FinishReportTask(StatQueryTask domainTask)
+    {
+        _storage.AddQueryResult(domainTask.Query.Id, domainTask.Result!);
+
+        domainTask.OnProgress -= OnDomainTaskProgress;
+        _manager.UnRegisterDomainTask(domainTask.Query.Id);
+    }
 
     public async Task<ReportInfoResponseDto?> GetReportInfoAsync(Guid queryId)
     {
@@ -68,7 +78,7 @@ public class ReportService : IReportService
 
         if (queryTask == null)
         {
-            StatQuery query = _storage.GetQuery(queryId);
+            StatQuery? query = _storage.GetQuery(queryId);
             if (query == null)
             {
                 // запрос не найден
@@ -76,7 +86,7 @@ public class ReportService : IReportService
                 return null;
             }
 
-            StatQueryResult queryResult = _storage.GetQueryResult(queryId);
+            StatQueryResult? queryResult = _storage.GetQueryResult(queryId);
             if (queryResult != null)
             {
                 // найден завершённый запрос с результатом
@@ -126,6 +136,32 @@ public class ReportService : IReportService
             )
         );
         return response;
+    }
+
+    private void OnDomainTaskProgress(object? sender, StatQueryTaskProgressEventArgs e)
+    {
+        StatQueryTask queryTask = (StatQueryTask)sender!;
+
+        if (e.Percent == 0)
+        {
+            _logger.LogInformation("================================");
+            _logger.LogInformation("НАЧАЛО: Query.Id: {queryId}", queryTask.Query.Id);
+            _logger.LogInformation("--------------------------------");
+        }
+        else if (e.Percent == 100)
+        {
+            _logger.LogInformation("--------------------------------");
+            _logger.LogInformation("КОНЕЦ: Query.Id: {queryId}", queryTask.Query.Id);
+            _logger.LogInformation("         UserId: {UserId}", queryTask.Query.UserId);
+            _logger.LogInformation("                 {Result}", queryTask.Result);
+            _logger.LogInformation("================================");
+
+            FinishReportTask(queryTask);
+        }
+        else
+        {
+            _logger.LogInformation("{Percent}% ({Message})", e.Percent, e.Message);
+        }
     }
 
 }

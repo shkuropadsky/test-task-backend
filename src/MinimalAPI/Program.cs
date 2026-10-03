@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpLogging;
 using MinimalAPI.Application.Interfaces;
 using MinimalAPI.Application.Services;
 using MinimalAPI.Domain;
+using MinimalAPI.DataStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 
 builder.Services.AddSingleton<IReportTaskRegistry, ReportTaskRegistry>();
+builder.Services.AddSingleton<IReportStorage, ReportStorageMemory>();
 
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportService, ReportService>();

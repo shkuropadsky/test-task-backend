@@ -12,6 +12,8 @@ public class StatQueryTask(IServiceProvider serviceProvider)
 
     public StatQueryResult? Result { get; set; }
 
+    public event EventHandler<StatQueryTaskProgressEventArgs>? OnProgress;
+
     public async Task Generate()
     {
         using var scope = serviceProvider.CreateScope();
@@ -22,12 +24,13 @@ public class StatQueryTask(IServiceProvider serviceProvider)
         int stepsNumber = 100;
         double stepDelay = (double)delayInMs / stepsNumber;
 
+        OnProgress?.Invoke(this, new StatQueryTaskProgressEventArgs(0, "Формирование отчёта начато"));
+
         DateTime t1 = DateTime.Now;
         logger.LogDebug("Начало: {Time:HH:mm:ss.fff}", t1);
         logger.LogDebug("Query: {QueryId}", Query.Id);
 
         logger.LogDebug("================================");
-        logger.LogDebug("Generate: {Percent} %", Percent);
 
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(stepDelay));
 
@@ -36,17 +39,18 @@ public class StatQueryTask(IServiceProvider serviceProvider)
         {
             await timer.WaitForNextTickAsync();
             Percent++;
-            logger.LogDebug("Generate: {Percent} %", Percent);
+
+            if (Percent == 100)
+            {
+                Result = new(CountSignIn: DEFAULT_COUNT_SIGN_IN);
+            }
+            else
+            {
+                OnProgress?.Invoke(this, new StatQueryTaskProgressEventArgs(Percent, "Идёт формирование отчёта..."));
+            }
         }
 
-        Result = new(CountSignIn: DEFAULT_COUNT_SIGN_IN);
-
-        logger.LogDebug("--------------------------------");
-        logger.LogDebug("Generate: {Percent} %", Percent);
-        logger.LogDebug(" QueryId: {QueryId}", Query.Id);
-        logger.LogDebug("  UserId: {UserId}", Query.UserId);
-        logger.LogDebug("          {Result}", Result);
-        logger.LogDebug("================================");
+        OnProgress?.Invoke(this, new StatQueryTaskProgressEventArgs(100, "Формирование отчёта завершено"));
 
         DateTime t2 = DateTime.Now;
         logger.LogDebug("Конец: {Time:HH:mm:ss.fff}", t2);

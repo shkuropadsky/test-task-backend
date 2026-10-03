@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using MinimalAPI.Application.Interfaces;
 using MinimalAPI.Domain;
 
@@ -5,25 +6,28 @@ namespace MinimalAPI.DataStorage;
 
 public class ReportStorageMemory : IReportStorage
 {
-    public void AddQuery(StatQuery statQuery)
+    ConcurrentDictionary<Guid, StatQuery> queries = new();
+    ConcurrentDictionary<Guid, StatQueryResult> queryResults = new();
+
+    public void AddQuery(StatQuery query)
     {
-        //throw new NotImplementedException();
+        queries.TryAdd(query.Id, query);
     }
 
-    public void AddQueryResult(StatQueryResult? result)
+    public void AddQueryResult(Guid queryId, StatQueryResult queryResult)
     {
-        //throw new NotImplementedException();
+        queryResults.TryAdd(queryId, queryResult);
     }
 
-    public StatQuery GetQuery(Guid queryId)
+    public StatQuery? GetQuery(Guid queryId)
     {
-        return null;
-        //throw new NotImplementedException();
+        queries.TryGetValue(queryId, out var query);
+        return query;
     }
 
-    public StatQueryResult GetQueryResult(Guid queryId)
+    public StatQueryResult? GetQueryResult(Guid queryId)
     {
-        return null;
-        //throw new NotImplementedException();
+        queryResults.TryGetValue(queryId, out var queryResult);
+        return queryResult;
     }
 }

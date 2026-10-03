@@ -6,25 +6,26 @@ namespace MinimalAPI.Application.Services;
 
 public class ReportManager : IReportManager
 {
+    private ILogger<ReportManager> _logger;
     private IReportTaskRegistry _taskRegistry;
 
-    public ReportManager(IReportTaskRegistry taskRegistry)
+    public ReportManager(ILogger<ReportManager> logger, IReportTaskRegistry taskRegistry)
     {
         _taskRegistry = taskRegistry;
+        _logger = logger;
     }
 
-    public Guid RegisterDomainTask(StatQueryTask domainTask)
+    public void RegisterDomainTask(StatQueryTask domainTask)
     {
-        Task threadTask = Task.Run(async () => await domainTask.Generate());
-
-        ReportTask task = new()
-        {
-            DomainTask = domainTask,
-            ThreadTask = threadTask
-        };
-
+        ReportTask task = new(domainTask);
         _taskRegistry.Add(domainTask.Query.Id, task);
-        return domainTask.Query.Id;
+
+        task.ThreadTask = Task.Run(async () => await domainTask.Generate());
+    }
+
+    public void UnRegisterDomainTask(Guid queryId)
+    {
+        _taskRegistry.Remove(queryId);
     }
 
     public StatQueryTask? GetDomainTask(Guid queryId)
