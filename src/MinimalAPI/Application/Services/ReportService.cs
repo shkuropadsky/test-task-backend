@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MinimalAPI.Application.Interfaces;
 using MinimalAPI.Contracts;
 using MinimalAPI.Domain;
@@ -138,6 +139,9 @@ public class ReportService : IReportService
         return response;
     }
 
+    /// <summary>
+    /// Обрабатывает событие от доменной задачи: прогресс подготовки отчёта
+    /// </summary>
     private void OnDomainTaskProgress(object? sender, StatQueryTaskProgressEventArgs e)
     {
         StatQueryTask queryTask = (StatQueryTask)sender!;
@@ -150,10 +154,13 @@ public class ReportService : IReportService
         }
         else if (e.Percent == 100)
         {
+            var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(queryTask.Result, jsonOptions);
+
             _logger.LogInformation("--------------------------------");
             _logger.LogInformation("КОНЕЦ: Query.Id: {queryId}", queryTask.Query.Id);
             _logger.LogInformation("         UserId: {UserId}", queryTask.Query.UserId);
-            _logger.LogInformation("                 {Result}", queryTask.Result);
+            _logger.LogInformation("         Result:\n{Result}", json);
             _logger.LogInformation("================================");
 
             FinishReportTask(queryTask);

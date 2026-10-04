@@ -23,27 +23,23 @@ static class ReportTestsArrange
     public static void AddDemoRecords(IReportTaskRegistry taskRegistry)
     {
         StatQuery query77 = new(Guid.Parse(DEMO_PROGRESS_077), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now);
-        taskRegistry.Add(query77.Id, new ReportTask()
+        ReportTask task77 = new ReportTask(new StatQueryTask(_serviceProviderMock)
         {
-            DomainTask = new StatQueryTask(_serviceProviderMock)
-            {
-                Query = query77,
-                Percent = 77
-            },
-            ThreadTask = new Task(() => { })
+            Query = query77,
+            Percent = 77
         });
+        taskRegistry.Add(query77.Id, task77);
+        task77.ThreadTask = new Task(() => { });
 
         StatQuery query100 = new(Guid.Parse(DEMO_PROGRESS_100), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now);
-        taskRegistry.Add(query100.Id, new ReportTask()
+        ReportTask task100 = new ReportTask(new StatQueryTask(_serviceProviderMock)
         {
-            DomainTask = new StatQueryTask(_serviceProviderMock)
-            {
-                Query = query100,
-                Percent = 100,
-                Result = new StatQueryResult(StatQueryTask.DEFAULT_COUNT_SIGN_IN)
-            },
-            ThreadTask = new Task(() => { })
+            Query = query100,
+            Percent = 100,
+            Result = new StatQueryResult(Guid.NewGuid(), query100.Id, StatQueryTask.DEFAULT_COUNT_SIGN_IN)
         });
+        taskRegistry.Add(query100.Id, task100);
+        task100.ThreadTask = new Task(() => { });
     }
 
     public class EmptyServiceProvider : IServiceProvider
