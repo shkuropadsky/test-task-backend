@@ -31,6 +31,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddSingleton<IReportTaskRegistry, ReportTaskRegistry>();
 builder.Services.AddSingleton<IReportStorage, ReportStorageMemory>();

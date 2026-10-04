@@ -1,7 +1,7 @@
 services:
   seq:
     image: datalust/seq:latest
-    container_name: backend-seq
+    container_name: tt-backend-seq
     environment:
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_NOAUTHENTICATION=true
@@ -13,5 +13,18 @@ services:
       - seq_data:/data
     restart: unless-stopped
 
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: tt-backend-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tt-backend
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   seq_data: 
+  postgres_data:
