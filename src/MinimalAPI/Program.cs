@@ -7,6 +7,9 @@ using MinimalAPI.Application.Interfaces;
 using MinimalAPI.Application.Services;
 using MinimalAPI.Domain;
 using MinimalAPI.DataStorage;
+using Microsoft.EntityFrameworkCore;
+using MinimalAPI.DataStorage.Memory;
+using MinimalAPI.DataStorage.Postgres;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,16 +34,20 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddSingleton<IReportTaskRegistry, ReportTaskRegistry>();
-builder.Services.AddSingleton<IReportStorage, ReportStorageMemory>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<PostgresReportDbContext>(options =>
+    options.UseNpgsql(connectionString));
+builder.Services.AddScoped<BaseReportDbContext>(provider =>
+    provider.GetRequiredService<PostgresReportDbContext>());
+builder.Services.AddScoped<IReportStorage, PostgresReportStorage>();
 
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.Configure<StatQueryTaskSettings>(builder.Configuration.GetSection("StatQueryTaskSettings"));
-builder.Services.AddTransient<StatQueryTask>(); 
+builder.Services.AddTransient<StatQueryTask>();
 
 var app = builder.Build();
 

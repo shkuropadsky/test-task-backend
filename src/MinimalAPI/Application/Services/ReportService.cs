@@ -8,16 +8,19 @@ namespace MinimalAPI.Application.Services;
 public class ReportService : IReportService
 {
     private IServiceProvider _serviceProvider;
+    private IServiceScopeFactory _scopeFactory;
     private ILogger<ReportService> _logger;
     private IReportManager _manager;
     private IReportStorage _storage;
 
     public ReportService(IServiceProvider serviceProvider,
+                         IServiceScopeFactory scopeFactory,
                          ILogger<ReportService> logger,
                          IReportManager manager,
                          IReportStorage storage)
     {
         _serviceProvider = serviceProvider;
+        _scopeFactory = scopeFactory;
         _logger = logger;
         _manager = manager;
         _storage = storage;
@@ -34,7 +37,7 @@ public class ReportService : IReportService
 
         _logger.LogDebug("Новый запрос: {queryId}", statQuery.Id);
 
-        _storage.AddQuery(statQuery);
+        await _storage.AddQueryAsync(statQuery);
         StartReportTask(statQuery);
 
         return statQuery.Id;
@@ -64,12 +67,23 @@ public class ReportService : IReportService
     /// убирает её из реестра активных задач
     /// и отписывается от её событий
     /// </summary>
-    private void FinishReportTask(StatQueryTask domainTask)
+    private async Task FinishReportTask(StatQueryTask domainTask)
     {
-        _storage.AddQueryResult(domainTask.Query.Id, domainTask.Result!);
-
         domainTask.OnProgress -= OnDomainTaskProgress;
-        _manager.UnRegisterDomainTask(domainTask.Query.Id);
+
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var storage = scope.ServiceProvider.GetRequiredService<IReportStorage>();
+            var manager = scope.ServiceProvider.GetRequiredService<IReportManager>();
+
+            await storage.AddQueryResultAsync(domainTask.Query.Id, domainTask.Result!);
+            manager.UnRegisterDomainTask(domainTask.Query.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception в FinishReportTask (Query={QueryId}) {exception}", domainTask.Query.Id, ex);
+        }
     }
 
     public async Task<ReportInfoResponseDto?> GetReportInfoAsync(Guid queryId)
@@ -79,7 +93,7 @@ public class ReportService : IReportService
 
         if (queryTask == null)
         {
-            StatQuery? query = _storage.GetQuery(queryId);
+            StatQuery? query = await _storage.GetQueryAsync(queryId);
             if (query == null)
             {
                 // запрос не найден
@@ -87,7 +101,7 @@ public class ReportService : IReportService
                 return null;
             }
 
-            StatQueryResult? queryResult = _storage.GetQueryResult(queryId);
+            StatQueryResult? queryResult = await _storage.GetQueryResultAsync(queryId);
             if (queryResult != null)
             {
                 // найден завершённый запрос с результатом
@@ -142,32 +156,39 @@ public class ReportService : IReportService
     /// <summary>
     /// Обрабатывает событие от доменной задачи: прогресс подготовки отчёта
     /// </summary>
-    private void OnDomainTaskProgress(object? sender, StatQueryTaskProgressEventArgs e)
+    private async void OnDomainTaskProgress(object? sender, StatQueryTaskProgressEventArgs e)
     {
-        StatQueryTask queryTask = (StatQueryTask)sender!;
-
-        if (e.Percent == 0)
+        try
         {
-            _logger.LogInformation("================================");
-            _logger.LogInformation("НАЧАЛО: Query.Id: {queryId}", queryTask.Query.Id);
-            _logger.LogInformation("--------------------------------");
+            StatQueryTask queryTask = (StatQueryTask)sender!;
+
+            if (e.Percent == 0)
+            {
+                _logger.LogInformation("================================");
+                _logger.LogInformation("НАЧАЛО: Query.Id: {queryId}", queryTask.Query.Id);
+                _logger.LogInformation("--------------------------------");
+            }
+            else if (e.Percent == 100)
+            {
+                var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(queryTask.Result, jsonOptions);
+
+                _logger.LogInformation("--------------------------------");
+                _logger.LogInformation("КОНЕЦ: Query.Id: {queryId}", queryTask.Query.Id);
+                _logger.LogInformation("         UserId: {UserId}", queryTask.Query.UserId);
+                _logger.LogInformation("         Result:\n{Result}", json);
+                _logger.LogInformation("================================");
+
+                await FinishReportTask(queryTask);
+            }
+            else
+            {
+                _logger.LogInformation("{Percent}% ({Message})", e.Percent, e.Message);
+            }
         }
-        else if (e.Percent == 100)
+        catch (Exception ex)
         {
-            var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
-            string json = JsonSerializer.Serialize(queryTask.Result, jsonOptions);
-
-            _logger.LogInformation("--------------------------------");
-            _logger.LogInformation("КОНЕЦ: Query.Id: {queryId}", queryTask.Query.Id);
-            _logger.LogInformation("         UserId: {UserId}", queryTask.Query.UserId);
-            _logger.LogInformation("         Result:\n{Result}", json);
-            _logger.LogInformation("================================");
-
-            FinishReportTask(queryTask);
-        }
-        else
-        {
-            _logger.LogInformation("{Percent}% ({Message})", e.Percent, e.Message);
+            _logger.LogCritical(ex, "Exception в OnDomainTaskProgress: {exception}", ex);
         }
     }
 

@@ -4,9 +4,9 @@ namespace MinimalAPI.Application.Interfaces;
 
 public interface IReportStorage
 {
-    void AddQuery(StatQuery query);
-    StatQuery? GetQuery(Guid queryId);
+    Task AddQueryAsync(StatQuery query);
+    Task<StatQuery?> GetQueryAsync(Guid queryId);
 
-    void AddQueryResult(Guid queryId, StatQueryResult queryResult);
-    StatQueryResult? GetQueryResult(Guid queryId);
+    Task AddQueryResultAsync(Guid queryId, StatQueryResult queryResult);
+    Task<StatQueryResult?> GetQueryResultAsync(Guid queryId);
 }
