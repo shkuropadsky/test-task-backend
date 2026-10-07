@@ -43,7 +43,11 @@ public class StatQueryTask(IServiceProvider serviceProvider)
             if (Percent == 100)
             {
                 // новый результат, связанный с исходным запросом по Id
-                Result = new(Guid.NewGuid(), Query.Id, CountSignIn: DEFAULT_COUNT_SIGN_IN);
+                Result = new(
+                    Id: Guid.NewGuid(),
+                    StatQueryId: Query.Id,
+                    CountSignIn: DEFAULT_COUNT_SIGN_IN,
+                    CreatedAt: DateTime.UtcNow);
             }
             else
             {

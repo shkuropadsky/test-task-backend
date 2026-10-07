@@ -32,7 +32,8 @@ public class ReportService : IReportService
             Id: Guid.NewGuid(),
             UserId: request.UserId,
             From: request.From,
-            To: request.To
+            To: request.To,
+            CreatedAt: DateTime.UtcNow
         );
 
         _logger.LogDebug("Новый запрос: {queryId}", statQuery.Id);

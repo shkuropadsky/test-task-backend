@@ -8,3 +8,7 @@
 2. ORM: EntityFramework (поддержка миграций)
 ## Последствия
 Если выполнение задачи было прервано, то при обращении по 'QueryId' не генерируется ошибка, а задача просто начинает выполняться заново.
+
+### Migrations
+dotnet ef migrations add ... --context PostgresReportDbContext --output-dir DataStorage/Postgres/Migrations
+dotnet ef database update --context PostgresReportDbContext

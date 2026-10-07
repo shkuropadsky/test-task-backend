@@ -22,7 +22,7 @@ static class ReportTestsArrange
     /// </summary>
     public static void AddDemoRecords(IReportTaskRegistry taskRegistry)
     {
-        StatQuery query77 = new(Guid.Parse(DEMO_PROGRESS_077), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now);
+        StatQuery query77 = new(Guid.Parse(DEMO_PROGRESS_077), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now, DateTime.Now);
         ReportTask task77 = new ReportTask(new StatQueryTask(_serviceProviderMock)
         {
             Query = query77,
@@ -31,12 +31,12 @@ static class ReportTestsArrange
         taskRegistry.Add(query77.Id, task77);
         task77.ThreadTask = new Task(() => { });
 
-        StatQuery query100 = new(Guid.Parse(DEMO_PROGRESS_100), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now);
+        StatQuery query100 = new(Guid.Parse(DEMO_PROGRESS_100), Guid.Parse(DEMO_USER), DateTime.Now, DateTime.Now, DateTime.Now);
         ReportTask task100 = new ReportTask(new StatQueryTask(_serviceProviderMock)
         {
             Query = query100,
             Percent = 100,
-            Result = new StatQueryResult(Guid.NewGuid(), query100.Id, StatQueryTask.DEFAULT_COUNT_SIGN_IN)
+            Result = new StatQueryResult(Guid.NewGuid(), query100.Id, StatQueryTask.DEFAULT_COUNT_SIGN_IN, DateTime.Now)
         });
         taskRegistry.Add(query100.Id, task100);
         task100.ThreadTask = new Task(() => { });
